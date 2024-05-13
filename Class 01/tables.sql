@@ -7,7 +7,7 @@ CREATE TABLE artist (
 );
 
 -- Query artist table to check if it's been created properly
-SELECT * FROM artist
+SELECT * FROM artist;
 
 -- Create artist_details table (one-to-one relationship with artist)
 CREATE TABLE artist_details (
