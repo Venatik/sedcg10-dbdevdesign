@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS artist_details, song_lyrics, playlist_songs, song_genres, song, playlist, artist, album;
+DROP TABLE IF EXISTS artist_details, song_lyrics, playlist_songs, song_genres, song, playlist, artist, album, genre;
 
 -- Create artist table
 CREATE TABLE artist (
@@ -88,4 +88,4 @@ CREATE TABLE album (
 SELECT * FROM album;
 
 -- CLEAN TABLES FROM DATA
-TRUNCATE TABLE artist_details, song_lyrics, playlist_songs, song_genres, song, playlist, artist, album;
+-- TRUNCATE TABLE artist_details, song_lyrics, playlist_songs, song_genres, song, playlist, artist, album;
