@@ -34,4 +34,21 @@ $$ LANGUAGE plpgsql
 SELECT get_artist_song_count('Eminem');
 SELECT get_artist_song_count('Ed Sheeran');
 
--- Declare a function get_artist_songs that is going to provide a table as a return value, with information about song name, duration and explicit status, based on provided artist name
+-- Declare a function "get_artist_songs" that is going to provide a table as a return value, with information about song name, duration and explicit status, based on provided artist name
+CREATE OR REPLACE FUNCTION get_artist_songs(artist_name VARCHAR)
+RETURNS TABLE (
+	song_name VARCHAR,
+	duration INTERVAL,
+	explicit BOOLEAN
+) AS $$
+BEGIN
+	RETURN QUERY
+	SELECT s.name, s.duration, s.explicit
+	FROM song s
+	INNER JOIN artist a ON s.artist_id = a.id
+	WHERE a.name = artist_name;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT get_artist_songs('Eminem');
+SELECT * FROM get_artist_songs('Eminem');
