@@ -1,34 +1,30 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ValidationPipe,
+  Query,
+} from '@nestjs/common';
 import { AlbumService } from './album.service';
-import { CreateAlbumDto } from './dto/album-query.dto';
-import { UpdateAlbumDto } from './dto/update-album.dto';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Album } from './entities/album.entity';
+import { AlbumsQueryDto } from './dto/album-query.dto';
 
+@ApiTags('album')
 @Controller('album')
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
 
-  @Post()
-  create(@Body() createAlbumDto: CreateAlbumDto) {
-    return this.albumService.create(createAlbumDto);
-  }
-
   @Get()
-  findAll() {
-    return this.albumService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.albumService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAlbumDto: UpdateAlbumDto) {
-    return this.albumService.update(+id, updateAlbumDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.albumService.remove(+id);
+  @ApiOperation({ summary: 'Get a list of albums.' })
+  @ApiOkResponse({ description: 'List of albums.', type: [Album] })
+  async getAlbums(
+    @Query(ValidationPipe) getAlbumsDto: AlbumsQueryDto,
+  ): Promise<Album[]> {
+    return this.albumService.findAll(getAlbumsDto);
   }
 }

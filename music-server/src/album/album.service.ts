@@ -1,26 +1,35 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAlbumDto } from './dto/album-query.dto';
-import { UpdateAlbumDto } from './dto/update-album.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Album } from './entities/album.entity';
+import { Repository } from 'typeorm';
+import { AlbumsQueryDto } from './dto/album-query.dto';
 
 @Injectable()
 export class AlbumService {
-  create(createAlbumDto: CreateAlbumDto) {
-    return 'This action adds a new album';
+  constructor(
+    @InjectRepository(Album) private albumRepository: Repository<Album>,
+  ) {}
+
+  async findAll(getAlbumsDto: AlbumsQueryDto): Promise<Album[]> {
+    const { search, skip, take } = getAlbumsDto;
+    const query = this.albumRepository.createQueryBuilder('album');
+
+    if (search) {
+      query.andWhere('album.name ILIKE :search', { search: `%${search}%` });
+    }
+
+    query.skip(skip).take(take);
+
+    return await query.getMany();
   }
 
-  findAll() {
-    return `This action returns all album`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} album`;
-  }
-
-  update(id: number, updateAlbumDto: UpdateAlbumDto) {
-    return `This action updates a #${id} album`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} album`;
+  // Get all albums with their songs and artist data
+  async getAllAlbumsWithSongsAndArtists(): Promise<Album[]> {
+    return await this.albumRepository
+      .createQueryBuilder('album')
+      .leftJoinAndSelect('album.songs', 'song')
+      .leftJoinAndSelect('song.artist', 'artist')
+      .leftJoinAndSelect('artist.artistDetails', 'details')
+      .getMany();
   }
 }
